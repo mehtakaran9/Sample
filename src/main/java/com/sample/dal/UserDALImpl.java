@@ -4,15 +4,21 @@ import com.mongodb.client.result.UpdateResult;
 import com.sample.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class UserDALImpl implements UserDAL {
+
+	@Autowired
+	private ReactiveMongoTemplate reactiveMongoTemplate;
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -73,7 +79,8 @@ public class UserDALImpl implements UserDAL {
 		query.addCriteria(Criteria.where("count").gt(0));
 		Update update = new Update();
 		update.inc("count", -1);
-		UpdateResult writeResult = mongoTemplate.updateFirst(query, update, User.class);
-		return writeResult.getModifiedCount() == 1;
+		return
+			Objects.requireNonNull(reactiveMongoTemplate.updateFirst(query, update, User.class).block())
+				.getModifiedCount() == 1;
 	}
 }
