@@ -75,4 +75,9 @@ public class UserController {
 			userRepository.save(user).subscribe(null, null, () -> LOG.info(user.toString()));
 		}).doOnError(throwable -> LOG.error(throwable.getMessage()));
 	}
+
+	@RequestMapping(value = "/count/{userId}", method = RequestMethod.GET)
+	public boolean updateCountByUserId(@PathVariable String userId) {
+		return userDAL.updateCount(userId);
+	}
 }
