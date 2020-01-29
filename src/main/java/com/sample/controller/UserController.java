@@ -5,6 +5,7 @@ import com.sample.dal.UserRepository;
 import com.sample.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,19 +14,15 @@ import java.util.Map;
 import java.util.Objects;
 
 @RestController
-@RequestMapping(value = "/")
 public class UserController {
 
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-	private final UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-	private final UserDAL userDAL;
-
-	public UserController(UserRepository userRepository, UserDAL userDAL) {
-		this.userRepository = userRepository;
-		this.userDAL = userDAL;
-	}
+	@Autowired
+	private UserDAL userDAL;
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public Mono<User> addNewUsers(@RequestBody User user) {
@@ -43,7 +40,7 @@ public class UserController {
 		});
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public Flux<User> getAllUsers() {
 		LOG.info("Getting all users.");
 		return userRepository.findAll();
@@ -76,8 +73,8 @@ public class UserController {
 		}).doOnError(throwable -> LOG.error(throwable.getMessage()));
 	}
 
-	@RequestMapping(value = "/count/{userId}", method = RequestMethod.GET)
-	public boolean updateCountByUserId(@PathVariable String userId) {
+	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	public boolean updateCountByUserId(@RequestParam String userId) {
 		return userDAL.updateCount(userId);
 	}
 }
