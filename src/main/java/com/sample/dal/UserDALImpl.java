@@ -1,8 +1,6 @@
 package com.sample.dal;
 
-import java.util.List;
-
-import com.mongodb.WriteResult;
+import com.mongodb.client.result.UpdateResult;
 import com.sample.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +10,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class UserDALImpl implements UserDAL {
@@ -77,8 +77,8 @@ public class UserDALImpl implements UserDAL {
 		query.addCriteria(Criteria.where("count").gt(0));
 		Update update = new Update();
 		update.inc("count", -1);
-		WriteResult writeResult = mongoTemplate.updateFirst(query, update, User.class);
-		if (writeResult.isUpdateOfExisting()) {
+		UpdateResult writeResult = mongoTemplate.updateFirst(query, update, User.class);
+		if (writeResult.getModifiedCount() == 1) {
 			return true;
 		} else
 			return false;

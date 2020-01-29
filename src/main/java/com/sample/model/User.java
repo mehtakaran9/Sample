@@ -1,11 +1,11 @@
 package com.sample.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class User {
@@ -55,5 +55,19 @@ public class User {
 
 	public void setUserSettings(Map<String, String> userSettings) {
 		this.userSettings = userSettings;
+	}
+
+	public User(String userId, String name, int count, Date creationDate,
+		Map<String, String> userSettings) {
+		this.userId = userId;
+		this.name = name;
+		this.count = count;
+		this.creationDate = creationDate;
+		this.userSettings = userSettings;
+	}
+
+	@Override public String toString() {
+		return "User{" + "userId='" + userId + '\'' + ", name='" + name + '\'' + ", count=" + count
+			+ ", creationDate=" + creationDate + ", userSettings=" + userSettings + '}';
 	}
 }
