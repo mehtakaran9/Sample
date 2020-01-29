@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -57,35 +55,11 @@ public class UserController {
 		return userRepository.findById(userId);
 	}
 
-	// @RequestMapping(value = "/settings/{userId}", method = RequestMethod.GET)
-	// public Object getAllUserSettings(@PathVariable String userId) {
-	// User user = userRepository.findOne(userId);
-	// if (user != null) {
-	// return user.getUserSettings();
-	// } else {
-	// return "User not found.";
-	// }
-	// }
-
 	@RequestMapping(value = "/settings/{userId}", method = RequestMethod.GET)
 	public Map<String, String> getAllUserSettings(@PathVariable String userId) {
 		Mono<User> userMono = userRepository.findById(userId);
 		return Objects.requireNonNull(userMono.block()).getUserSettings();
 	}
-
-	// @RequestMapping(value = "/settings/{userId}/{key}", method =
-	// RequestMethod.GET)
-	// public String getUserSetting(@PathVariable String userId, @PathVariable
-	// String key) {
-	// //User user = userRepository.findOne(userId);
-	// String setting = userDAL.getUserSetting(userId, key);
-	// LOG.info("Setting = "+setting);
-	// if (setting != null) {
-	// return setting;
-	// } else {
-	// return "Setting not found.";
-	// }
-	// }
 
 	@RequestMapping(value = "/settings/{userId}/{key}", method = RequestMethod.GET)
 	public String getUserSetting(@PathVariable String userId, @PathVariable String key) {

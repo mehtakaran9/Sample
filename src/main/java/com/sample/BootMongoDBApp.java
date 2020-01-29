@@ -22,20 +22,18 @@ public class BootMongoDBApp {
 
 
 	@Bean CommandLineRunner users(UserRepository userRepository) {
-		return args -> {
-			userRepository.deleteAll().subscribe(null, null, () -> {
-				Stream
-					.of(new User(UUID.randomUUID().toString(), "Karan", 10000, new Date(), new HashMap<>()),
-						new User(UUID.randomUUID().toString(), "Lovish", 50000, new Date(), new HashMap<>()),
-						new User(UUID.randomUUID().toString(), "Apoorv", 40000, new Date(), new HashMap<>()),
-						new User(UUID.randomUUID().toString(), "Sumeet", 30000, new Date(), new HashMap<>()),
-						new User(UUID.randomUUID().toString(), "Malati", 20000, new Date(), new HashMap<>()))
-					.forEach(user -> {
-						userRepository.save(user).subscribe(User::toString);
-						LOG.info(user.toString());
-					});
-			});
-		};
+		return args -> userRepository.deleteAll().subscribe(null, null, () -> {
+			Stream
+				.of(new User(UUID.randomUUID().toString(), "Karan", 10000, new Date(), new HashMap<>()),
+					new User(UUID.randomUUID().toString(), "Lovish", 50000, new Date(), new HashMap<>()),
+					new User(UUID.randomUUID().toString(), "Apoorv", 40000, new Date(), new HashMap<>()),
+					new User(UUID.randomUUID().toString(), "Sumeet", 30000, new Date(), new HashMap<>()),
+					new User(UUID.randomUUID().toString(), "Malati", 20000, new Date(), new HashMap<>()))
+				.forEach(user -> {
+					userRepository.save(user).subscribe(User::toString);
+					LOG.info(user.toString());
+				});
+		});
 	}
 
 	public static void main(String[] args) {
