@@ -2,8 +2,6 @@ package com.sample.dal;
 
 import com.mongodb.client.result.UpdateResult;
 import com.sample.model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,8 +13,6 @@ import java.util.List;
 
 @Repository
 public class UserDALImpl implements UserDAL {
-	private final Logger LOG = LoggerFactory.getLogger(getClass());
-
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -78,9 +74,6 @@ public class UserDALImpl implements UserDAL {
 		Update update = new Update();
 		update.inc("count", -1);
 		UpdateResult writeResult = mongoTemplate.updateFirst(query, update, User.class);
-		if (writeResult.getModifiedCount() == 1) {
-			return true;
-		} else
-			return false;
+		return writeResult.getModifiedCount() == 1;
 	}
 }
