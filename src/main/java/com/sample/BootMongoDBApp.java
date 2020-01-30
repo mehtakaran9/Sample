@@ -28,7 +28,7 @@ public class BootMongoDBApp {
 					new User(UUID.randomUUID().toString(), "Lovish", 50000, new Date(), new HashMap<>()),
 					new User(UUID.randomUUID().toString(), "Apoorv", 40000, new Date(), new HashMap<>()),
 					new User(UUID.randomUUID().toString(), "Sumeet", 30000, new Date(), new HashMap<>()),
-					new User(UUID.randomUUID().toString(), "Malati", 20000, new Date(), new HashMap<>()))
+					new User(UUID.randomUUID().toString(), "Prateek", 20000, new Date(), new HashMap<>()))
 				.forEach(user -> {
 					userRepository.save(user).subscribe(User::toString);
 					LOG.info(user.toString());
