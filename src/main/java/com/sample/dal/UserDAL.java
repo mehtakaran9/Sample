@@ -18,5 +18,5 @@ public interface UserDAL {
 
 	String addUserSetting(String userId, String key, String value);
 
-	boolean updateCount(String userId);
+	boolean updateCount(String name);
 }

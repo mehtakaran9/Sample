@@ -75,7 +75,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/count", method = RequestMethod.GET)
-	public boolean updateCountByUserId(@RequestParam String userId) {
-		return userDAL.updateCount(userId);
+	public boolean updateCountByName(@RequestParam String name) {
+		return userDAL.updateCount(name);
 	}
 }
