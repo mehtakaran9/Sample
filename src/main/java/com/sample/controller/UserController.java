@@ -44,7 +44,7 @@ public class UserController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public Flux<User> getAllUsers() {
 		LOG.info("Getting all users.");
-		return userRepository.findAll();
+		return userDAL.getAllUsers();
 	}
 
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)

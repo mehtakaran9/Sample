@@ -3,10 +3,11 @@ package com.sample.dal;
 import java.util.List;
 
 import com.sample.model.User;
+import reactor.core.publisher.Flux;
 
 public interface UserDAL {
 
-	List<User> getAllUsers();
+	Flux<User> getAllUsers();
 
 	User getUserById(String userId);
 

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,8 +23,8 @@ public class UserDALImpl implements UserDAL {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<User> getAllUsers() {
-		return mongoTemplate.findAll(User.class);
+	public Flux<User> getAllUsers() {
+		return reactiveMongoTemplate.findAll(User.class);
 	}
 
 	@Override
