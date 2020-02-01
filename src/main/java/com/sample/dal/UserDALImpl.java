@@ -51,7 +51,8 @@ public class UserDALImpl implements UserDAL {
 	public String getUserSetting(String userId, String key) {
 		Query query = new Query();
 		query.fields().include("userSettings");
-		query.addCriteria(Criteria.where("_id").is(userId).andOperator(Criteria.where("userSettings." + key).exists(true)));
+		query.addCriteria(Criteria.where("_id").is(userId)
+			.andOperator(Criteria.where("userSettings." + key).exists(true)));
 		User user = mongoTemplate.findOne(query, User.class);
 		return user != null ? user.getUserSettings().get(key) : "Not found.";
 	}
