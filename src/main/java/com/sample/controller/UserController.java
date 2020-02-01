@@ -1,7 +1,6 @@
 package com.sample.controller;
 
 import com.sample.dal.UserDAL;
-import com.sample.dal.UserRepository;
 import com.sample.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,25 +19,12 @@ public class UserController {
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
 	private UserDAL userDAL;
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public Mono<User> addNewUsers(@RequestBody User user) {
 		LOG.info("Saving user.");
 		return userRepository.save(user);
-	}
-
-	@RequestMapping(value = "/update/{userId}", method = RequestMethod.GET)
-	public Mono<User> updateCount(@PathVariable String userId) {
-		Mono<User> userMono = userRepository.findById(userId);
-		return userMono.doOnSuccess(user -> {
-			user.setCount(user.getCount() + 1);
-			userRepository.save(user)
-				.subscribe(null, null, () -> LOG.info("Updated count for userId {}", userId));
-		});
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
