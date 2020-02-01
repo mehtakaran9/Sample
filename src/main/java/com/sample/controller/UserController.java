@@ -62,7 +62,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/settings/{userId}", method = RequestMethod.GET)
-	public Mono<Map> getAllUserSettings(@PathVariable String userId) {
+	public Flux<Map> getAllUserSettings(@PathVariable String userId) {
 		return userDAL.getAllUserSettings(userId);
 	}
 
