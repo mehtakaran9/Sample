@@ -9,8 +9,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Repository
@@ -42,11 +43,10 @@ public class UserDALImpl implements UserDAL {
 	}
 
 	@Override
-	public Object getAllUserSettings(String userId) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("userId").is(userId));
-		User user = mongoTemplate.findOne(query, User.class);
-		return user != null ? user.getUserSettings() : "User not found.";
+	public Mono<Map> getAllUserSettings(String userId) {
+		Query query = Query.query(Criteria.where("userId").is(userId));
+		query.fields().include("userSettings");
+		return reactiveMongoTemplate.findOne(query, Map.class);
 	}
 
 	@Override

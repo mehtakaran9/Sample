@@ -1,9 +1,11 @@
 package com.sample.dal;
 
 import java.util.List;
+import java.util.Map;
 
 import com.sample.model.User;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface UserDAL {
 
@@ -13,7 +15,7 @@ public interface UserDAL {
 
 	User addNewUser(User user);
 
-	Object getAllUserSettings(String userId);
+	Mono<Map> getAllUserSettings(String userId);
 
 	String getUserSetting(String userId, String key);
 
