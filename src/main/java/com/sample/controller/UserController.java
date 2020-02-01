@@ -6,12 +6,15 @@ import com.sample.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -25,10 +28,13 @@ public class UserController {
 	@Autowired
 	private UserDAL userDAL;
 
+	@Autowired
+	private ReactiveMongoTemplate reactiveMongoTemplate;
+
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public Mono<User> addNewUsers(@RequestBody User user) {
 		LOG.info("Saving user.");
-		return userRepository.save(user);
+		return reactiveMongoTemplate.save(user);
 	}
 
 	@RequestMapping(value = "/update/{userId}", method = RequestMethod.GET)
@@ -44,19 +50,18 @@ public class UserController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public Flux<User> getAllUsers() {
 		LOG.info("Getting all users.");
-		return userRepository.findAll();
+		return userDAL.getAllUsers();
 	}
 
 	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
 	public Mono<User> getUser(@PathVariable String userId) {
 		LOG.info("Getting user with ID: {}.", userId);
-		return userRepository.findById(userId);
+		return reactiveMongoTemplate.findById(userId, User.class);
 	}
 
 	@RequestMapping(value = "/settings/{userId}", method = RequestMethod.GET)
-	public Map<String, String> getAllUserSettings(@PathVariable String userId) {
-		Mono<User> userMono = userRepository.findById(userId);
-		return Objects.requireNonNull(userMono.block()).getUserSettings();
+	public Flux<Map> getAllUserSettings(@PathVariable String userId) {
+		return userDAL.getAllUserSettings(userId);
 	}
 
 	@RequestMapping(value = "/settings/{userId}/{key}", method = RequestMethod.GET)
@@ -65,13 +70,16 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/settings/{userId}/{key}/{value}", method = RequestMethod.GET)
-	public Mono<User> addUserSetting(@PathVariable String userId, @PathVariable String key,
+	public boolean addUserSetting(@PathVariable String userId, @PathVariable String key,
 		@PathVariable String value) {
-		Mono<User> userMono = userRepository.findById(userId);
-		return userMono.doOnSuccess(user -> {
-			user.getUserSettings().put(key, value);
-			userRepository.save(user).subscribe(null, null, () -> LOG.info(user.toString()));
-		}).doOnError(throwable -> LOG.error(throwable.getMessage()));
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(userId));
+		Update update = new Update();
+		update.set("userSettings.".concat(key), value);
+		boolean result =
+
+			reactiveMongoTemplate.updateFirst(query, update, User.class).block().getModifiedCount() == 1;
+		return result;
 	}
 
 	@RequestMapping(value = "/count", method = RequestMethod.GET)

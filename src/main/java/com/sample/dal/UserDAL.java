@@ -1,18 +1,19 @@
 package com.sample.dal;
 
-import java.util.List;
+import java.util.Map;
 
 import com.sample.model.User;
+import reactor.core.publisher.Flux;
 
 public interface UserDAL {
 
-	List<User> getAllUsers();
+	Flux<User> getAllUsers();
 
 	User getUserById(String userId);
 
 	User addNewUser(User user);
 
-	Object getAllUserSettings(String userId);
+	Flux<Map> getAllUserSettings(String userId);
 
 	String getUserSetting(String userId, String key);
 
