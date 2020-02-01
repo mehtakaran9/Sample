@@ -8,8 +8,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Repository
@@ -22,14 +23,14 @@ public class UserDALImpl implements UserDAL {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<User> getAllUsers() {
-		return mongoTemplate.findAll(User.class);
+	public Flux<User> getAllUsers() {
+		return reactiveMongoTemplate.findAll(User.class);
 	}
 
 	@Override
 	public User getUserById(String userId) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("userId").is(userId));
+		query.addCriteria(Criteria.where("_id").is(userId));
 		return mongoTemplate.findOne(query, User.class);
 	}
 
@@ -41,18 +42,17 @@ public class UserDALImpl implements UserDAL {
 	}
 
 	@Override
-	public Object getAllUserSettings(String userId) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("userId").is(userId));
-		User user = mongoTemplate.findOne(query, User.class);
-		return user != null ? user.getUserSettings() : "User not found.";
+	public Flux<Map> getAllUserSettings(String userId) {
+		Query query = Query.query(Criteria.where("_id").is(userId));
+		return reactiveMongoTemplate.findDistinct(query, "userSettings", User.class, Map.class);
 	}
 
 	@Override
 	public String getUserSetting(String userId, String key) {
 		Query query = new Query();
 		query.fields().include("userSettings");
-		query.addCriteria(Criteria.where("userId").is(userId).andOperator(Criteria.where("userSettings." + key).exists(true)));
+		query.addCriteria(Criteria.where("_id").is(userId)
+			.andOperator(Criteria.where("userSettings." + key).exists(true)));
 		User user = mongoTemplate.findOne(query, User.class);
 		return user != null ? user.getUserSettings().get(key) : "Not found.";
 	}
@@ -60,7 +60,7 @@ public class UserDALImpl implements UserDAL {
 	@Override
 	public String addUserSetting(String userId, String key, String value) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("userId").is(userId));
+		query.addCriteria(Criteria.where("_id").is(userId));
 		User user = mongoTemplate.findOne(query, User.class);
 		if (user != null) {
 			user.getUserSettings().put(key, value);

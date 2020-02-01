@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 public class BootMongoDBApp {
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-
 	@Bean CommandLineRunner users(ReactiveMongoTemplate reactiveMongoTemplate) {
 		Query query = new Query();
 		return args -> reactiveMongoTemplate.findAllAndRemove(query, User.class)
