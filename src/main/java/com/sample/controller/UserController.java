@@ -1,6 +1,5 @@
 package com.sample.controller;
 
-import com.mongodb.client.result.UpdateResult;
 import com.sample.dal.UserDAL;
 import com.sample.dal.UserRepository;
 import com.sample.model.User;
@@ -16,7 +15,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping(value = "/user")
