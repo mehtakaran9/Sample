@@ -44,7 +44,6 @@ import java.util.Objects;
     @Override public User addNewUser(User user) {
         mongoTemplate.save(user);
         javers.commit("Added", user);
-        // Now, user object will contain the ID as well
         return user;
     }
 
