@@ -29,7 +29,7 @@ public class AuditController {
     @GetMapping("/user") public String getUserChanges() {
         QueryBuilder jqlQuery = QueryBuilder.byClass(User.class);
         List<Change> changes =
-            javers.findChanges(QueryBuilder.byClass(User.class).withChildValueObjects().build());
+            javers.findChanges(jqlQuery.withChildValueObjects().build());
         return javers.getJsonConverter().toJson(changes);
     }
 
