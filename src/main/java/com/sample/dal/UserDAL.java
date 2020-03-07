@@ -3,6 +3,7 @@ package com.sample.dal;
 import java.util.Map;
 
 import com.sample.model.User;
+import org.javers.spring.annotation.JaversAuditable;
 import reactor.core.publisher.Flux;
 
 public interface UserDAL {

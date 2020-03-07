@@ -42,6 +42,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.javers/javers-spring-boot-starter-mongo -->
+		<dependency>
+			<groupId>org.javers</groupId>
+			<artifactId>javers-spring-boot-starter-mongo</artifactId>
+			<version>5.8.10</version>
+		</dependency>
+
 
 
 		<dependency>

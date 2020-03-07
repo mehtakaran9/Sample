@@ -1,13 +1,16 @@
 package com.sample;
 
+import com.sample.dal.UserDAL;
 import com.sample.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -19,6 +22,8 @@ import java.util.stream.Stream;
 @SpringBootApplication
 @EnableSwagger2
 public class BootMongoDBApp {
+	@Autowired
+	private UserDAL userDAL;
 	private final Logger LOG = LoggerFactory.getLogger(getClass());
 
 	@Bean CommandLineRunner users(ReactiveMongoTemplate reactiveMongoTemplate) {
@@ -32,7 +37,7 @@ public class BootMongoDBApp {
 						new User(UUID.randomUUID().toString(), "Sumeet", 30000, new Date(), new HashMap<>()),
 						new User(UUID.randomUUID().toString(), "Malati", 20000, new Date(), new HashMap<>()))
 					.forEach(user -> {
-						reactiveMongoTemplate.save(user).subscribe(User::toString);
+						userDAL.addNewUser(user);
 						LOG.info(user.toString());
 					});
 			});
