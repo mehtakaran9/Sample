@@ -14,6 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -27,48 +28,51 @@ public class UserController {
 	@Autowired
 	private ReactiveMongoTemplate reactiveMongoTemplate;
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	@PostMapping(value = "/create")
 	public Mono<User> addNewUsers(@RequestBody User user) {
 		LOG.info("Saving user.");
 		return reactiveMongoTemplate.save(user);
 	}
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@GetMapping(value = "/")
 	public Flux<User> getAllUsers() {
 		LOG.info("Getting all users.");
 		return userDAL.getAllUsers();
 	}
 
-	@RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+	@GetMapping(value = "/{userId}")
 	public Mono<User> getUser(@PathVariable String userId) {
 		LOG.info("Getting user with ID: {}.", userId);
 		return reactiveMongoTemplate.findById(userId, User.class);
 	}
 
-	@RequestMapping(value = "/settings/{userId}", method = RequestMethod.GET)
+	@GetMapping(value = "/settings/{userId}")
 	public Flux<Map> getAllUserSettings(@PathVariable String userId) {
 		return userDAL.getAllUserSettings(userId);
 	}
 
-	@RequestMapping(value = "/settings/{userId}/{key}", method = RequestMethod.GET)
+	@GetMapping(value = "/settings/{userId}/{key}")
 	public String getUserSetting(@PathVariable String userId, @PathVariable String key) {
 		return userDAL.getUserSetting(userId, key);
 	}
 
-	@RequestMapping(value = "/settings/{userId}/{key}/{value}", method = RequestMethod.GET)
+	@GetMapping(value = "/settings/{userId}/{key}/{value}")
 	public boolean addUserSetting(@PathVariable String userId, @PathVariable String key,
 		@PathVariable String value) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(userId));
 		Update update = new Update();
 		update.set("userSettings.".concat(key), value);
-		boolean result =
-
-			reactiveMongoTemplate.updateFirst(query, update, User.class).block().getModifiedCount() == 1;
-		return result;
+		AtomicBoolean result = new AtomicBoolean(false);
+		reactiveMongoTemplate.updateFirst(query, update, User.class).doOnSuccess(updateResult -> {
+			if (updateResult != null) {
+				result.set(updateResult.getModifiedCount() == 1);
+			}
+		}).block();
+		return result.get();
 	}
 
-	@RequestMapping(value = "/count", method = RequestMethod.GET)
+	@GetMapping(value = "/count")
 	public boolean updateCountByName(@RequestParam String name) {
 		return userDAL.updateCount(name);
 	}

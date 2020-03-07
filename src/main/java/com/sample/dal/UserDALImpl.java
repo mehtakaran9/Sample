@@ -58,7 +58,7 @@ import java.util.Objects;
         query.addCriteria(Criteria.where("_id").is(userId)
             .andOperator(Criteria.where("userSettings." + key).exists(true)));
         User user = mongoTemplate.findOne(query, User.class);
-        return user != null ? user.getUserSettings().get(key) : "Not found.";
+        return user != null ? user.getUserSettings().get(key) : "Not found";
     }
 
     @Override public String addUserSetting(String userId, String key, String value) {
@@ -68,6 +68,7 @@ import java.util.Objects;
         if (user != null) {
             user.getUserSettings().put(key, value);
             mongoTemplate.save(user);
+            javers.commit("Updated User Settings", user);
             return "Key added.";
         } else {
             return "User not found.";
